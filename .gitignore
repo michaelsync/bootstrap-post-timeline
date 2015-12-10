@@ -14,3 +14,4 @@ wp-content/wp-cache-config.php
 bower_components/
 nbproject/
 test.html
+style.css
