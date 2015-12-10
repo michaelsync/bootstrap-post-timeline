@@ -1,0 +1,28 @@
+{
+  "name": "bootstrap-post-timeline",
+  "homepage": "https://github.com/mikostn/bootstrap-post-timeline",
+  "authors": [
+    "miko <miko@stn.pl>"
+  ],
+  "description": "WordPress short-code displays posts on vertical timeline with bootstrap collapse",
+  "main": "bootstrap-post-timeline.php",
+  "moduleType": [],
+  "keywords": [
+    "shortcode",
+    "post",
+    "timeline",
+    "bootstrap"
+  ],
+  "license": "GPLv2",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "~3.3.6"
+  }
+}
