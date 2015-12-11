@@ -32,8 +32,13 @@ class bootstrapPostTimeline {
         register_activation_hook(__FILE__, array(&$this, 'rewrite_flush'));
         add_action('init', array(&$this, 'create_post_type'));
 
+        add_filter('getarchives_where', array(&$this, 'timeline_post_type_archive_where'), 10, 2);
+
         add_action('add_meta_boxes_timeline_post', array(&$this, 'add_meta_boxes'));
         add_action('save_post', array(&$this, 'update'), 10, 2);
+
+        add_action('wp_ajax_getpost_by_year', array(&$this, 'process_getpost_by_year'));
+        add_action('wp_ajax_nopriv_getpost_by_year', array(&$this, 'process_getpost_by_year'));
     }
 
     function rewrite_flush() {
@@ -63,7 +68,14 @@ class bootstrapPostTimeline {
         );
     }
 
-    //////////////////////////////////////////
+    //add filter to get_archive function http://wordpress.stackexchange.com/a/42071
+    function timeline_post_type_archive_where($where, $args) {
+        $post_type = isset($args['post_type']) ? $args['post_type'] : 'post';
+        $where = "WHERE post_type = '$post_type' AND post_status = 'publish'";
+        return $where;
+    }
+
+//////////////////////////////////////////
     // add subtitles support
     function add_meta_boxes() {
         add_meta_box('timelineSubtitle', 'Subtitle', array(&$this, 'box'), 'timeline_post', 'normal');
@@ -107,12 +119,13 @@ class bootstrapPostTimeline {
     function add_script() {
 //        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/imagesloaded.pkgd.js';
 //        wp_enqueue_script('bootstrap-post-timeline-imagesloaded.pkgd', $filename, array('jquery'), '3.1.8');
-
 //        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/jquery.infinitescroll.js';
 //        wp_enqueue_script('bootstrap-post-timeline-infinitescroll', $filename, array('jquery'), '2.1.0');
 
-//        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.js';
-//        wp_enqueue_script('bootstrap-post-timeline', $filename, array('jquery'), '1.0');
+        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.js';
+        wp_register_script('bootstrap-post-timeline', $filename, array('jquery'), '1.0');
+        bootstrapPostTimeline::setAJAXnonce();
+        wp_enqueue_script('bootstrap-post-timeline');
     }
 
     //////////////////////////////////////////
@@ -120,6 +133,96 @@ class bootstrapPostTimeline {
     function add_style() {
         $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/css/timeline.css';
         wp_enqueue_style('bootstrap-post-timeline', $filename, false, '1.1');
+    }
+
+    function setAJAXnonce() {
+        //Set Nonce for AJAX calls
+        $ajax_nonce = wp_create_nonce("my-special-string");
+        // Add some parameters for the JS.
+        wp_localize_script(
+                'bootstrap-post-timeline', 'bpt', array(
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'startPage' => $paged,
+            'maxPages' => $max,
+            'nextLink' => next_posts($max, false),
+            'security' => $ajax_nonce
+                )
+        );
+    }
+
+    function process_getpost_by_year() {
+        check_ajax_referer('my-special-string', 'security');
+
+        $year = sanitize_text_field(intval($_POST['year']));
+
+        $args = array(
+            'post_type' => 'timeline_post',
+            'ignore_sticky_posts' => 1,
+            'year' => $year,
+        );
+
+        $the_query = new WP_Query($args);
+        if ($the_query->have_posts()) {
+            $output = '';
+            while ($the_query->have_posts()) {
+                $the_query->the_post();
+                $post = $the_query->post;
+
+                $add_class = '';
+                if ($count % 2) {
+                    $add_class .= ' right';
+                } else {
+                    $add_class .= ' left';
+                }
+
+                $time_current = (integer) get_post_time();
+                if (!$time_last) {
+                    $opened = true;
+                    $time_last = (integer) get_post_time();
+                }
+
+                $days = ceil(abs($time_current - $time_last) / (60 * 60 * 24));
+                $time_last = $time_current;
+                $opened = FALSE;
+
+                $add_style = '';
+                if ($year_top) {
+                    $add_class .= ' year_top';
+                } else {
+                    $add_style = ' style="margin-top: ' . $days . 'px;"';
+                }
+
+                $size = 'large';
+                if (wp_is_mobile()) {
+                    $size = 'medium';
+                }
+
+                if (!empty($post->post_excerpt)) {
+                    $content = $post->post_excerpt;
+                } else {
+                    $pieces = get_extended($post->post_content);
+                    //var_dump($pieces); // debug
+                    $content = apply_filters('the_content', $pieces['main']);
+                }
+                $subtitle = get_post_meta($post->ID, 'timeline_subtitle', true);
+
+                $output .= '<li id="post-' . $post->ID . '" name="post-' . $post->ID . '" class="item' . $add_class . '"' . $add_style . '>';
+                $output .= '<div class="item-content">';
+                $output .= '<a href="' . get_permalink() . '">';
+                $output .= get_the_post_thumbnail($post->ID, $size);
+//				$output .= '<div class="title">' .get_post_time( get_option( 'date_format' ) ) .'<br>' .$title .'</div>';
+                $output .= '<h4 class="title">' . $title . '</h4>';
+                $output .= (!empty($subtitle)) ? '<h5 class="subtitle">' . $subtitle . '</h5>' : '';
+                $output .= $content;
+                $output .= '</a>';
+                $output .= '</div>';
+                $output .= '</li>';
+            }
+            echo $output;
+        }
+        wp_reset_postdata();
+//        wp_send_json();
+        wp_die();
     }
 
     //////////////////////////////////////////
@@ -161,6 +264,23 @@ class bootstrapPostTimeline {
             $posts_per_page = get_option('posts_per_page');
         }
         $args['posts_per_page'] = $posts_per_page;
+
+
+
+
+        $args = array(
+            'post_type' => 'timeline_post',
+            'type' => 'yearly',
+            'limit' => '',
+            'format' => 'custom',
+            'before' => '',
+            'after' => ';',
+            'show_post_count' => false,
+            'echo' => 0,
+            'order' => 'DESC'
+        );
+        $navlistItems = wp_get_archives($args);
+
 
         // prev post
         $year_prev = 0;

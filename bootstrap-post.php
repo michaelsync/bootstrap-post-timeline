@@ -5,7 +5,7 @@
   To change this template file, choose Tools | Templates
   and open the template in the editor.
  */
-$time_last = false;
+
 $opened = false;
 foreach ($myposts as $post) {
     setup_postdata($post);
@@ -32,14 +32,14 @@ foreach ($myposts as $post) {
             $output .= '</ul>';
         }
 
-                        if ($year <> $year_prev) {
-            $output .= '<h3 id="' . esc_attr($year) . '" name="' . esc_attr($year) . '" data-yearpost="' . esc_attr($year) . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-'.esc_attr($year).'" aria-expanded="'.(($opened)? 'true' : 'false').'">' . $year . '</h3>';
+        if ($year <> $year_prev) {
+            $output .= '<h3 id="' . esc_attr($year) . '" name="' . esc_attr($year) . '" data-yearhead="' . esc_attr($year) . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . esc_attr($year) . '" aria-expanded="' . (($opened) ? 'true' : 'false') . '">' . $year . '</h3>';
         }
 
 
         $year_last = $year;
         $year_top = 1;
-        $output .= '<ul class="year_posts year-'.esc_attr($year).' collapse '.(($opened)? 'in' : '').'" data-yearpost="' . esc_attr($year) . '">';
+        $output .= '<ul class="year_posts year-' . esc_attr($year) . ' collapse ' . (($opened) ? 'in' : '') . '" data-yearpost="' . esc_attr($year) . '">';
     }
 
     $days = ceil(abs($time_current - $time_last) / (60 * 60 * 24));
@@ -85,8 +85,32 @@ foreach ($myposts as $post) {
 
 // output
 if ($count) {
+
+//phrase navlist
+    $yearOnList = $listedYear = '';
+    $navlistItems = explode(';', $navlistItems);
+    $outputExt = '';
+    foreach ($navlistItems as $listedYear) {
+        if (!trim($listedYear)) {
+            continue;
+        }
+        preg_match_all('/<a .*?>(.*?)<\/a>/', $listedYear, $matches);
+        $listedYear = $matches[1][0];
+        $yearOnList .= '<li data-yeartarget="' . $listedYear . '" class="year-list-item"><span></span><a href="#' . $listedYear . '">' . $listedYear . '</a></li>';
+
+        if (intval($year) > intval($listedYear)) {
+            $outputExt .= '<h3 id="' . $listedYear . '" name="' . $listedYear . '" data-yearhead="' . $listedYear . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . $listedYear . '" aria-expanded="false">' . $listedYear . '</h3>';
+            $outputExt .= '<ul class="year_posts year-' . $listedYear . ' collapse" data-yearpost="' . $listedYear . '"></ul>';
+        }
+    }
+
+    $navlist = '<div class="timeline-container"><ul class="timeline-year-list nav">' .
+            '<li class="year-list-item-top"><a href="#timeline"><i class="fa fa-home"></i></a></li>' .
+            $yearOnList .
+            '</ul></div>';
     $rewrite_url = ( $wp_rewrite->using_permalinks() ) ? '<div class="rewrite_url">' : '';
     $url = add_query_arg(array('timeline_next' => ( $timeline_next + 1 )));
-    $output = '<div id="infinite_timeline">' . $output . '</div><div class="pagenation"><a href="' . $url . '">' . __('More', 'bootstrap-post-timeline') . '</a><img src="' . plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/images/loading.gif" alt="" class="loading">' . $rewrite_url . '</div></div>';
+
+    $output = '<div id="timeline">' . $navlist . $output . '</ul>' . $outputExt . '</div><div class="pagenation"><a href="' . $url . '">' . __('More', 'bootstrap-post-timeline') . '</a><img src="' . plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/images/loading.gif" alt="" class="loading">' . $rewrite_url . '</div></div>';
 }
 ?>
