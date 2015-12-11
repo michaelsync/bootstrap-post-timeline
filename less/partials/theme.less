@@ -1,0 +1,34 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : 2015-12-11, 13:56:36
+    Author     : mikostn <miko@stn.pl>
+*/
+
+.timeline-bg(@border-color:#fff; @width:5px; @pos: 50%){
+    position: relative;
+    &:before {
+        top: 0;
+        bottom: 0;
+        position: absolute;
+        content: " ";
+        width: @width;
+        background-color: @border-color;
+        left: @pos;
+        margin-left: -(@width/2);
+        z-index: -1;
+    }
+}
+@main-color: #D7D7D7;
+
+@timeline-bg: @main-color;
+
+@year-color: @main-color;
+
+@year-color-top: #FFFFFF;
+
+@item-padding-vertical: 0;
+@item-padding-horizontal: 26px;

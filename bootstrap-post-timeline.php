@@ -1,10 +1,10 @@
 <?php
 /*
   Plugin Name: Bootstrap Posts Timeline
-  Plugin URI: 
+  Plugin URI:
   Description: The short-code displays posts on vertical timeline with bootstrap collapse
   Author: mikostn sysbird
-  Author URI: 
+  Author URI:
   Version: 1.0
   License: GPLv2 or later
   Text Domain: bootstrap-post-timeline
@@ -24,7 +24,7 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // construct
     function __construct() {
-        load_plugin_textdomain('bootstrap-post-timeline', false, plugin_basename(dirname(__FILE__)) . '/languages');
+//        load_plugin_textdomain('bootstrap-post-timeline', false, plugin_basename(dirname(__FILE__)) . '/languages');
         add_shortcode('bootstrap-post-timeline', array(&$this, 'shortcode'));
         add_action('wp_enqueue_scripts', array(&$this, 'add_script'));
         add_action('wp_print_styles', array(&$this, 'add_style'));
@@ -66,7 +66,7 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add subtitles support
     function add_meta_boxes() {
-        add_meta_box('timelineSubtitle', 'Subtitle', array(&$this, 'box'), 'timeline_post', 'side');
+        add_meta_box('timelineSubtitle', 'Subtitle', array(&$this, 'box'), 'timeline_post', 'normal');
     }
 
     function box($post) {
@@ -105,14 +105,14 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add JavaScript
     function add_script() {
-        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/imagesloaded.pkgd.js';
-        wp_enqueue_script('bootstrap-post-timeline-imagesloaded.pkgd', $filename, array('jquery'), '3.1.8');
+//        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/imagesloaded.pkgd.js';
+//        wp_enqueue_script('bootstrap-post-timeline-imagesloaded.pkgd', $filename, array('jquery'), '3.1.8');
 
-        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/jquery.infinitescroll.js';
-        wp_enqueue_script('bootstrap-post-timeline-infinitescroll', $filename, array('jquery'), '2.1.0');
+//        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/jquery.infinitescroll.js';
+//        wp_enqueue_script('bootstrap-post-timeline-infinitescroll', $filename, array('jquery'), '2.1.0');
 
-        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.js';
-        wp_enqueue_script('bootstrap-post-timeline', $filename, array('jquery'), '1.0');
+//        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.js';
+//        wp_enqueue_script('bootstrap-post-timeline', $filename, array('jquery'), '1.0');
     }
 
     //////////////////////////////////////////
@@ -132,7 +132,7 @@ class bootstrapPostTimeline {
         // option
         $atts = shortcode_atts(array('category_name' => '',
             'tag' => '',
-            'post_type' => 'post',
+            'post_type' => 'timeline_post',
             'posts_per_page' => 0), $atts);
 
         $args = array('post_type' => $atts['post_type']);
@@ -150,9 +150,9 @@ class bootstrapPostTimeline {
         }
 
         // page
-        $infinite_timeline_next = 1;
-        if (isset($_GET['infinite_timeline_next'])) {
-            $infinite_timeline_next = $_GET['infinite_timeline_next'];
+        $timeline_next = 1;
+        if (isset($_GET['timeline_next'])) {
+            $timeline_next = $_GET['timeline_next'];
         }
 
         // posts per page
@@ -164,9 +164,9 @@ class bootstrapPostTimeline {
 
         // prev post
         $year_prev = 0;
-        if (1 < $infinite_timeline_next) {
+        if (1 < $timeline_next) {
             $args['posts_per_page'] = 1;
-            $args['offset'] = $posts_per_page * ( $infinite_timeline_next - 1 ) - 1;
+            $args['offset'] = $posts_per_page * ( $timeline_next - 1 ) - 1;
             $myposts = get_posts($args);
             if ($myposts) {
                 foreach ($myposts as $post) {
@@ -179,7 +179,7 @@ class bootstrapPostTimeline {
 
         // get posts
         $args['posts_per_page'] = $posts_per_page;
-        $args['offset'] = $posts_per_page * ( $infinite_timeline_next - 1 );
+        $args['offset'] = $posts_per_page * ( $timeline_next - 1 );
         $myposts = get_posts($args);
         $time_last = 0;
         $year_last = 0;
@@ -187,87 +187,9 @@ class bootstrapPostTimeline {
 //        $years = '';
         $count = 0;
         if ($myposts) {
-            foreach ($myposts as $post) {
-                setup_postdata($post);
-                $title = get_the_title();
-
-                $add_class = '';
-                if ($count % 2) {
-                    $add_class .= ' right';
-                } else {
-                    $add_class .= ' left';
-                }
-
-                // days gone by
-                $time_current = (integer) get_post_time();
-                if (!$time_last) {
-                    $time_last = (integer) get_post_time();
-                }
-
-                $year = (integer) get_post_time('Y');
-                if ($year != $year_last) {
-                    if ($count) {
-                        $output .= '</div>';
-                    }
-
-                    if ($year <> $year_prev) {
-                        $output .= '<div id="' . esc_attr($year) . '" name="' . esc_attr($year) . '" data-yearpost="' . esc_attr($year) . '" class="year_head">' . $year . '</div>';
-                    }
-
-                    $year_last = $year;
-                    $year_top = 1;
-                    $output .= '<div class="year_posts" data-yearpost="' . esc_attr($year) . '">';
-
-//                    $years .= '<li>' . $year . '</li>';
-                }
-
-                $days = ceil(abs($time_current - $time_last) / (60 * 60 * 24));
-                $time_last = $time_current;
-
-                $add_style = '';
-                if ($year_top) {
-                    $add_class .= ' year_top';
-                } else {
-                    $add_style = ' style="margin-top: ' . $days . 'px;"';
-                }
-
-                $size = 'large';
-                if (wp_is_mobile()) {
-                    $size = 'medium';
-                }
-
-                if (!empty($post->post_excerpt)) {
-                    $content = $post->post_excerpt;
-                } else {
-                    $pieces = get_extended($post->post_content);
-                    //var_dump($pieces); // debug
-                    $content = apply_filters('the_content', $pieces['main']);
-                }
-                $subtitle = get_post_meta($post->ID, 'timeline_subtitle', true);
-
-                $output .= '<div id="post-'.$post->ID.'" name="post-'.$post->ID.'" class="item' . $add_class . '"' . $add_style . '>';
-                $output .= '<a href="' . get_permalink() . '">';
-                $output .= get_the_post_thumbnail($post->ID, $size);
-//				$output .= '<div class="title">' .get_post_time( get_option( 'date_format' ) ) .'<br>' .$title .'</div>';
-                $output .= '<h4 class="title">' . $title . '</h4>';
-                $output .= (!empty($subtitle)) ? '<h5 class="subtitle">' . $subtitle . '</h5>' : '';
-                $output .= '<div class="content">' . $content . '</div>';
-                $output .= '</a>';
-                $output .= '</div>';
-
-                $count++;
-                $year_top = 0;
-            }
-//            $years = '<ul>' . $years . '</ul>';
+            include 'bootstrap-post.php';
         }
         wp_reset_postdata();
-
-        // output
-        if ($count) {
-            $rewrite_url = ( $wp_rewrite->using_permalinks() ) ? '<div class="rewrite_url">' : '';
-            $url = add_query_arg(array('infinite_timeline_next' => ( $infinite_timeline_next + 1 )));
-            $output = '<div id="infinite_timeline"><a id="timeline-top" name="timeline-top"></a><div class="box">' . $output . '</div></div><div class="pagenation"><a href="' . $url . '">' . __('More', 'bootstrap-post-timeline') . '</a><img src="' . plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/images/loading.gif" alt="" class="loading">' . $rewrite_url . '</div></div>';
-        }
 
         return $output;
     }

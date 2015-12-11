@@ -14,7 +14,7 @@ jQuery(function () {
         if (jQuery('#infinite_timeline .rewrite_url').length) {
             // using_permalinks
             path = new Array();
-            path.push(location.href + '?infinite_timeline_next=');
+            path.push(location.href + '?timeline_next=');
             path.push("");
         }
 
