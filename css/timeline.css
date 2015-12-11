@@ -21,6 +21,8 @@ and open the template in the editor.
   /* Baloon */
   /* add before&after to hide ballons */
   /* Pagenation */
+  /* set padding for list */
+  padding: 0 90px;
 }
 #timeline * {
   box-sizing: border-box;
@@ -184,10 +186,6 @@ and open the template in the editor.
 #timeline .pagenation img {
   display: none;
 }
-/* set padding for list */
-#timeline {
-  padding: 0 90px;
-}
 #timeline .timeline-container {
   position: absolute;
   right: 0;
@@ -272,15 +270,8 @@ and open the template in the editor.
   opacity: 1;
   width: 46px;
 }
-/* Mobile */
-@media screen and (max-width: 480px) {
-  #timeline .title {
-    padding: 5px;
-    font-size: 0.9em;
-  }
-  #timeline .year_head {
-    margin-top: 10px;
-  }
+#timeline .pagenation {
+  display: none;
 }
 /*==========  Mobile First Method  ==========*/
 /* Custom, iPhone Retina */
@@ -315,7 +306,16 @@ and open the template in the editor.
     margin: 15px 0 0 0 !important;
     width: auto !important;
   }
+  #timeline .timeline-container {
+    display: none;
+  }
 }
 /* Extra Small Devices, Phones */
+@media only screen and (max-width: 480px) {
+  #timeline .title {
+    padding: 5px;
+    font-size: 0.9em;
+  }
+}
 /* Custom, iPhone Retina */
 /*# sourceMappingURL=timeline.css.map */

@@ -178,10 +178,9 @@ timeline.css
     .pagenation img {
         display: none;
     }
-}
 
-/* set padding for list */
-#timeline {
+
+    /* set padding for list */
     padding: 0 90px;
 
 
@@ -275,16 +274,8 @@ timeline.css
             }
         }
     }
-}
-/* Mobile */
-@media screen and (max-width: 480px) {
-    #timeline .title {
-        padding: 5px;
-        font-size: 0.9em;
-    }
-
-    #timeline .year_head {
-        margin-top: 10px;
+    .pagenation {
+        display: none;
     }
 }
 
@@ -345,12 +336,23 @@ timeline.css
         }
         .item::before {
         }
+        .timeline-container {
+            display: none;
+        }
     }
 }
 
 /* Extra Small Devices, Phones */
 @media only screen and (max-width: 480px) {
+    #timeline .title {
+        padding: 5px;
+        font-size: 0.9em;
+    }
+
+    #timeline .year_head {
+    }
 }
+
 
 /* Custom, iPhone Retina */
 @media only screen and (max-width: 320px) {
