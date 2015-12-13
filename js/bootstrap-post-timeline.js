@@ -29,17 +29,6 @@ jQuery(function ($) {
                 })
                 ).done(function () {
 
-            var timelineTop = jQuery('#timeline').offset().top;
-            jQuery('#timeline .timeline-year-list').affix({
-                offset: {
-                    top: function () {
-                        return (this.top = timelineTop - scrollPadding);
-                    },
-                    bottom: function () {
-                        return (this.bottom = jQuery(document).height() - (timelineTop + jQuery('#timeline').height()) + scrollPadding);
-                    }
-                }
-            });
         });
     }
     jQuery(window).load(function () {
@@ -54,12 +43,34 @@ jQuery(function ($) {
                 updateYearList();
             }, 400);
         });
+        var scrollPadding = 90;
+        var timelineTop = jQuery('#timeline').offset().top;
+        jQuery('#timeline .timeline-year-list').affix({
+            offset: {
+                top: function () {
+                    return (this.top = timelineTop - scrollPadding);
+                },
+                bottom: function () {
+                    return (this.bottom = jQuery(document).height() - (timelineTop + jQuery('#timeline').height()) + scrollPadding);
+                }
+            }
+        });
 
         $('#timeline .timeline-year-list').on("click", "[data-yeartarget]", function () {
             var year = jQuery(this).data().yeartarget;
             jQuery('[data-yearpost=' + year + ']').collapse('show');
+            // animate to
+            $('html, body').animate({
+                scrollTop: jQuery('[data-yearhead=' + year + ']').offset().top - 60
+            }, 300, function () {
+                // when done, add hash to url
+                // (default click behaviour)
+                // window.location.hash = hash;
+            });
         });
-
+        $('[data-yearpost]').on('shown.bs.collapse hidden.bs.collapse', function () {
+            jQuery('#timeline .timeline-year-list').affix('checkPosition');
+        });
         $('[data-yearpost]').on('show.bs.collapse', function () {
             var year = jQuery(this).data().yearpost;
 
@@ -80,16 +91,6 @@ jQuery(function ($) {
             }
 
             // if loadmore.length
-
-
-            // animate to
-            $('html, body').animate({
-                scrollTop: jQuery('[data-yearhead=' + year + ']').offset().top - 60
-            }, 300, function () {
-                // when done, add hash to url
-                // (default click behaviour)
-                // window.location.hash = hash;
-            });
 
         })
     });

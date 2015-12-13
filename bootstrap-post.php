@@ -7,8 +7,10 @@
  */
 
 $opened = false;
+$posts_IDs = array();
 foreach ($myposts as $post) {
     setup_postdata($post);
+    $posts_IDs[] = $post->ID;
 
     $title = get_the_title();
 
@@ -100,7 +102,10 @@ if ($count) {
 
         if (intval($year) > intval($listedYear)) {
             $outputExt .= '<h3 id="' . $listedYear . '" name="' . $listedYear . '" data-yearhead="' . $listedYear . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . $listedYear . '" aria-expanded="false">' . $listedYear . '</h3>';
-            $outputExt .= '<ul class="year_posts year-' . $listedYear . ' collapse" data-yearpost="' . $listedYear . '"></ul>';
+
+            $outputExt .= '<ul class="year_posts year-' . $listedYear . ' collapse" data-yearpost="' . $listedYear . '">'.
+                    '<li id="post-' . implode('"></li><li id="post-', $postIdsByYear[$listedYear]) . '"></li>'
+                    . '</ul>';
         }
     }
 
@@ -111,6 +116,11 @@ if ($count) {
     $rewrite_url = ( $wp_rewrite->using_permalinks() ) ? '<div class="rewrite_url">' : '';
     $url = add_query_arg(array('timeline_next' => ( $timeline_next + 1 )));
 
-    $output = '<div id="timeline">' . $navlist . $output . '</ul>' . $outputExt . '</div><div class="pagenation"><a href="' . $url . '">' . __('More', 'bootstrap-post-timeline') . '</a><img src="' . plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/images/loading.gif" alt="" class="loading">' . $rewrite_url . '</div></div>';
+    $output = '<div id="timeline">' . $navlist . $output . '</ul>' . $outputExt . '</div>'
+            . '<div class="pagenation">'
+//            . '<a href="' . $url . '">' . __('More', 'bootstrap-post-timeline') . '</a><img src="' . plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/images/loading.gif" alt="" class="loading">' . $rewrite_url 
+//            . '</div>'
+//            . '</div>';
+            ;
 }
 ?>
