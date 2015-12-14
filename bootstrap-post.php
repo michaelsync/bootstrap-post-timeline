@@ -35,7 +35,7 @@ foreach ($myposts as $post) {
         }
 
         if ($year <> $year_prev) {
-            $output .= '<h3 id="' . esc_attr($year) . '" name="' . esc_attr($year) . '" data-yearhead="' . esc_attr($year) . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . esc_attr($year) . '" aria-expanded="' . (($opened) ? 'true' : 'false') . '">' . $year . '</h3>';
+            $output .= '<h3 id="' . esc_attr($year) . '" name="' . esc_attr($year) . '" data-yearhead="' . esc_attr($year) . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . esc_attr($year) . '" aria-expanded="' . (($opened) ? 'true' : 'false') . '"><span>' . $year . '</span></h3>';
         }
 
 
@@ -101,7 +101,7 @@ if ($count) {
         $yearOnList .= '<li data-yeartarget="' . $listedYear . '" class="year-list-item"><span></span><a href="#' . $listedYear . '">' . $listedYear . '</a></li>';
 
         if (intval($year) > intval($listedYear)) {
-            $outputExt .= '<h3 id="' . $listedYear . '" name="' . $listedYear . '" data-yearhead="' . $listedYear . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . $listedYear . '" aria-expanded="false">' . $listedYear . '</h3>';
+            $outputExt .= '<h3 id="' . $listedYear . '" name="' . $listedYear . '" data-yearhead="' . $listedYear . '" class="year_head" data-toggle="collapse" role="button" data-target=".year-' . $listedYear . '" aria-expanded="false"><span>' . $listedYear . '</span></h3>';
 
             $outputExt .= '<ul class="year_posts year-' . $listedYear . ' collapse" data-yearpost="' . $listedYear . '">'.
                     '<li id="post-' . implode('"></li><li id="post-', $postIdsByYear[$listedYear]) . '"></li>'
