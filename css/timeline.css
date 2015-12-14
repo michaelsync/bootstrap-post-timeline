@@ -226,7 +226,10 @@ and open the template in the editor.
   width: 80px;
 }
 #timeline .timeline-year-list {
-  /*.timeline-bg(#828282, 5px);*/
+  background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAABWKLW/AAABh3pUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjajVNbcsMwCPznFD2CQOh1HMeWZnqDHr+LHmnsSZrAjMALQrCSqf58N/oyCTmThpRjidFBtGiRDU52Q0pfuVuemJ+WzzitAMtlw7S8nXGdh/DtUmgFJF8KyWzADoDPOr7TNgt5oKeOphNLTk7/ArkOe+yroHeeffAbVumrykLEC8EEb5vjJCVZ/4sOS0GUCz/ivcdOyXbPp7kBnfpOyDOenFzwRbj/w+kUWBI7xh3nB+wf8unK/jvy+1gPXMo2PAJ8CvB+39qltSO3VnuCbhrx1uJ8RWv4UQiJN/RhQwSMol09/OGFrhGU7nimaWpzN2hxO7NrLFAmOCaeI++cYJU3Dh3LiGd8HdDW1XMSERXhKor8CqyOVkiN1HFu6idXnJxdRZKimHL9TOnTxGfamr1WjJfXv2aPiMXuBdPYtduKNFwChwdqX4vQTFd2b5Pdyn1WmF4lM39S+LBfeLd5aI5jwzjfHG7VhjoK/QIx6P+wCe8kVQAAAARzQklUCAgICHwIZIgAAAAVSURBVAiZY2xqavrPAAVMDEgAhQMAW9cCi9yShHUAAAAASUVORK5CYII=');
+  background-color: transparent;
+  background-position: 16.5px 0;
+  background-repeat: repeat-y;
   color: #828282;
   list-style: none;
   margin: 0;
