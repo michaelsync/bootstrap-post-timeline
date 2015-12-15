@@ -26,7 +26,7 @@ timeline.css
         position: absolute;
         content: " ";
         width: 30px;
-        background-color: #D7D7D7;
+        background-color: @timeline-bg;
         left: 50%;
         margin-left: -15px;
         z-index: -1;
@@ -350,25 +350,68 @@ timeline.css
     #timeline {
         /*padding-left: 0;*/
         padding: 0;
-        &:before {
-            left:50px;
+        &::before {
+            left: 0;
+            z-index: 0;
+            margin-left: 0;
+        }
+        &::after {
+            display: none;
         }
         .year_head {
-            float: left;
-            width: 100px;
+            background: #ffffff;
+            border: none;
+            position: relative;
+            height: 30px !important;
+            /*margin: 0 0 4px 0;*/
+            margin: 0;
+            span {
+                background: #FFF none repeat scroll 0% 0% !important;
+                border: medium none !important;
+                border-radius: unset !important;
+                box-shadow: unset !important;
+                color: rgb(215, 215, 215);
+                height: 30px !important;
+                margin: 0 !important;
+                padding: 5px !important;
+            }
+            &::before {
+                background: @timeline-bg;
+                border-radius: 50%;
+                content: ' ';
+                display: block;
+                height: 30px;
+                width: 30px;
+                position: absolute;
+                left: -13px;
+                top: 0;
+            }
+            &::after {
+                background: @timeline-bg;
+                content: ' ';
+                display: block;
+                height: 2px;
+                width: 100%;
+                margin-top: -16px;
+            }
         }
         .year_posts {
             clear: both;
-            padding-left: 56px;
+            /*padding-left: 56px;*/
+            padding: 0 0 3px 0;
         }
         .item {
             float: left !important;
             margin: 15px 0 0 0 !important;
-            width: auto !important;
-        }
-        .item::before {
-        }
-        .item::before {
+            padding-right: 10px;
+            width: 100% !important;
+            &::before {
+                left: -20px;
+                z-index: 0;
+            }
+            &::after {
+                display: none;
+            }
         }
         .timeline-container {
             display: none;

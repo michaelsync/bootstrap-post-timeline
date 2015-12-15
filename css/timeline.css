@@ -328,21 +328,68 @@ and open the template in the editor.
     /*padding-left: 0;*/
     padding: 0;
   }
-  #timeline:before {
-    left: 50px;
+  #timeline::before {
+    left: 0;
+    z-index: 0;
+    margin-left: 0;
+  }
+  #timeline::after {
+    display: none;
   }
   #timeline .year_head {
-    float: left;
-    width: 100px;
+    background: #ffffff;
+    border: none;
+    position: relative;
+    height: 30px !important;
+    /*margin: 0 0 4px 0;*/
+    margin: 0;
+  }
+  #timeline .year_head span {
+    background: #FFF none repeat scroll 0% 0% !important;
+    border: medium none !important;
+    border-radius: unset !important;
+    box-shadow: unset !important;
+    color: #d7d7d7;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 5px !important;
+  }
+  #timeline .year_head::before {
+    background: #D7D7D7;
+    border-radius: 50%;
+    content: ' ';
+    display: block;
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    left: -13px;
+    top: 0;
+  }
+  #timeline .year_head::after {
+    background: #D7D7D7;
+    content: ' ';
+    display: block;
+    height: 2px;
+    width: 100%;
+    margin-top: -16px;
   }
   #timeline .year_posts {
     clear: both;
-    padding-left: 56px;
+    /*padding-left: 56px;*/
+    padding: 0 0 3px 0;
   }
   #timeline .item {
     float: left !important;
     margin: 15px 0 0 0 !important;
-    width: auto !important;
+    padding-right: 10px;
+    width: 100% !important;
+  }
+  #timeline .item::before {
+    left: -20px;
+    z-index: 0;
+  }
+  #timeline .item::after {
+    display: none;
   }
   #timeline .timeline-container {
     display: none;
