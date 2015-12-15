@@ -325,7 +325,7 @@ and open the template in the editor.
 @media only screen and (max-width: 1024px) {
   #timeline {
     padding-left: 60px;
-    padding-right: 0px;
+    padding-right: 60px;
   }
 }
 /* Medium Devices, Desktops */
