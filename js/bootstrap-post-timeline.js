@@ -31,27 +31,40 @@ jQuery(function ($) {
 
         });
     }
+    function resetAffix(scrollPadding) {
+        jQuery('#timeline .timeline-year-list').affix('checkPosition');
+        jQuery('#timeline .timeline-year-list').data('bs.affix').options.offset = {
+            top: function () {
+                return (this.top = jQuery('#timeline').offset().top - scrollPadding);
+            },
+            bottom: function () {
+                return (this.bottom = jQuery(document).height() - (jQuery('#timeline').offset().top + jQuery('#timeline').height()) + scrollPadding);
+            }
+        };
+
+    }
     jQuery(window).load(function () {
+        var scrollPadding = 90;
         updateYearList();
 
         // run init func with delay, wiat for resize to finish, + wait for css animations to finish!
         var resizeTimer;
         jQuery(window).on('resize', function (e) {
+            resetAffix(scrollPadding);
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function () {
                 // Run code here, resizing has "stopped"
                 updateYearList();
             }, 400);
         });
-        var scrollPadding = 90;
-        var timelineTop = jQuery('#timeline').offset().top;
+
         jQuery('#timeline .timeline-year-list').affix({
             offset: {
                 top: function () {
-                    return (this.top = timelineTop - scrollPadding);
+                    return (this.top = jQuery('#timeline').offset().top - scrollPadding);
                 },
                 bottom: function () {
-                    return (this.bottom = jQuery(document).height() - (timelineTop + jQuery('#timeline').height()) + scrollPadding);
+                    return (this.bottom = jQuery(document).height() - (jQuery('#timeline').offset().top + jQuery('#timeline').height()) + scrollPadding);
                 }
             }
         });
@@ -68,9 +81,11 @@ jQuery(function ($) {
                 // window.location.hash = hash;
             });
         });
+
         $('[data-yearpost]').on('shown.bs.collapse hidden.bs.collapse', function () {
-            jQuery('#timeline .timeline-year-list').affix('checkPosition');
+            resetAffix(scrollPadding);
         });
+
         $('[data-yearpost]').on('show.bs.collapse', function () {
             var year = jQuery(this).data().yearpost;
 
