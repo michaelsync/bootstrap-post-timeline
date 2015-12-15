@@ -341,6 +341,14 @@ timeline.css
 @media only screen and (max-width: 1200px) {
 }
 
+/* Small Devices, Tablets */ /* BLUE */
+@media only screen and (max-width: 1024px) {
+    #timeline {
+        padding-left: 60px;
+        padding-right: 0px;
+    }
+}
+
 /* Medium Devices, Desktops */
 @media only screen and (max-width: 992px) {
 }
@@ -353,7 +361,7 @@ timeline.css
         &::before {
             left: 0;
             z-index: 0;
-            margin-left: 0;
+            margin: 10px 0 0 0;
         }
         &::after {
             display: none;
@@ -361,19 +369,21 @@ timeline.css
         .year_head {
             background: #ffffff;
             border: none;
+            border-radius: 0;
             position: relative;
             height: 30px !important;
             /*margin: 0 0 4px 0;*/
-            margin: 0;
+            margin: 10px 0;
             span {
                 background: #FFF none repeat scroll 0% 0% !important;
                 border: medium none !important;
-                border-radius: unset !important;
-                box-shadow: unset !important;
+                border-radius: 0 !important;
+                box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.75) !important;
                 color: rgb(215, 215, 215);
                 height: 30px !important;
                 margin: 0 !important;
                 padding: 5px !important;
+                width: 100px !important;
             }
             &::before {
                 background: @timeline-bg;
