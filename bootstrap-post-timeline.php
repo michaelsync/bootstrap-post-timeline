@@ -143,6 +143,9 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add JavaScript
     function add_script() {
+        if(!$this->shortcode){
+            return;
+        }
 //        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/imagesloaded.pkgd.js';
 //        wp_enqueue_script('bootstrap-post-timeline-imagesloaded.pkgd', $filename, array('jquery'), '3.1.8');
 //        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/jquery.infinitescroll.js';
@@ -157,6 +160,9 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add css
     function add_style() {
+        if(!$this->shortcode){
+            return;
+        }
         $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/css/timeline.css';
         wp_enqueue_style('bootstrap-post-timeline', $filename, false, '1.1');
     }
