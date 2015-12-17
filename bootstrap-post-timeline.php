@@ -160,9 +160,6 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add css
     function add_style() {
-        if(!$this->shortcode){
-            return;
-        }
         $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/css/timeline.css';
         wp_enqueue_style('bootstrap-post-timeline', $filename, false, '1.1');
     }
