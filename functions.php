@@ -5,6 +5,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+defined( 'ABSPATH' ) or die();
 
 //http://wordpress.stackexchange.com/a/108421
 function get_posts_fields($args = array()) {

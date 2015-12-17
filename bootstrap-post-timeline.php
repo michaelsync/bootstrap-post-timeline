@@ -9,6 +9,7 @@
   License: GPLv2 or later
   Text Domain: bootstrap-post-timeline
  */
+defined( 'ABSPATH' ) or die();
 
 //////////////////////////////////////////////////////
 // Wordpress 3.0+
