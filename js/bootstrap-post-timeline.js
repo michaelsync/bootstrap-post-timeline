@@ -92,8 +92,9 @@ jQuery(function ($) {
             // if empty load posts
             if (jQuery(this).children('[data-type="timeline_post"]').length === 0) {
                 var data = {
-                    year: year,
                     action: 'getpost_by_year',
+                    year: year,
+                    maxPages: bpt.maxPages,
                     security: bpt.security,
                 };
                 function loadHtml(the_query) {

@@ -9,7 +9,7 @@
     <?php foreach ($this->moreYears as $listedYear => $postIds) { ?>
         <h3 id="<?php echo $listedYear ?>" name="<?php echo $listedYear ?>" data-yearhead="<?php echo $listedYear ?>" class="year_head" data-toggle="collapse" role="button" data-target=".year-<?php echo $listedYear ?>" aria-expanded="false"><span><?php echo $listedYear ?></span></h3>
         <ul class="year_posts year-<?php echo $listedYear ?> collapse" data-yearpost="<?php echo $listedYear ?>">
-            <li class="item" id="post-<?php echo implode('"></li><li class="item" id="post-', $this->postIdsByYear($listedYear)) ?>" ></li>
+            <li class="item" id="post-<?php echo implode('"></li><li class="item" id="post-', $this->getPostIdsByYear($listedYear)) ?>" ></li>
         </ul>
     <?php } ?>
 <?php /* 

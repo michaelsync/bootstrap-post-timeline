@@ -9,7 +9,7 @@
   License: GPLv2 or later
   Text Domain: bootstrap-post-timeline
  */
-defined( 'ABSPATH' ) or die();
+defined('ABSPATH') or die();
 
 //////////////////////////////////////////////////////
 // Wordpress 3.0+
@@ -62,7 +62,7 @@ class bootstrapPostTimeline {
         // add scripts in footer
         add_action('wp_footer', array($this, 'add_script'));
 //        add_action('wp_enqueue_scripts', array(&$this, 'add_script'));
-        
+
         $this->setTheme();
     }
 
@@ -182,10 +182,12 @@ class bootstrapPostTimeline {
     function process_getpost_by_year() {
         check_ajax_referer('my-special-string', 'security');
         $year = sanitize_text_field(intval($_POST['year']));
+        $maxPages = sanitize_text_field(intval($_POST['maxPages']));
         $args = array(
             'post_type' => 'timeline_post',
             'ignore_sticky_posts' => 1,
             'year' => $year,
+            'posts_per_page' => $maxPages
         );
         $this->getPosts($args);
         $this->ajax = true;
@@ -209,16 +211,16 @@ class bootstrapPostTimeline {
 
         $args = array('post_type' => $atts['post_type']);
 
+        // Show year list
+        $year_list = $atts['year_list'];
+        if ($year_list) {
+            $year_list = true;
+        }
+
         // category name
         $category_name = $atts['category_name'];
         if ($category_name) {
             $args['category_name'] = $category_name;
-        }
-
-        // Show year list
-        $year_list = $atts['year_list'];
-        if ($year_list) {
-            $this->year_list = true;
         }
 
         $tag = $atts['tag'];
@@ -226,37 +228,36 @@ class bootstrapPostTimeline {
             $args['tag'] = $tag;
         }
 
-        // posts per page
-//        echo 'get_option(posts_per_page);: '.get_option('posts_per_page').'<br />';
-//        echo '$atts[posts_per_page];'.$atts['posts_per_page'].'<br />';
-        if (!$posts_per_page) {
-            $posts_per_page = get_option('posts_per_page');
-        }
-        $args['posts_per_page'] = $posts_per_page;
-        $this->maxPages = $args['posts_per_page'];
-
         // page
         $timeline_next = 1;
         if (isset($_GET['timeline_next'])) {
             $timeline_next = $_GET['timeline_next'];
         }
 
+        // posts per page
+        $posts_per_page = $atts['posts_per_page'];
+        if (!$posts_per_page) {
+            $posts_per_page = get_option('posts_per_page');
+        }
+
         // get posts
         $args['posts_per_page'] = $posts_per_page;
         $args['offset'] = $posts_per_page * ( $timeline_next - 1 );
 
-        $this->post_date_from = date('Y-01-01');
-        $args['year'] = $this->post_date_from;
+        // start from year - current
+        $post_date_from = date('Y-01-01');
+        $args['year'] = $post_date_from;
+
+        // set global params
+        $this->year_list = $year_list;
+        $this->maxPages = $posts_per_page;
+        $this->post_date_from = $post_date_from;
+
+        //pass info top theme file
         $this->shortcode = true;
 
-        $this->getPosts($args);
-
-        $this->getMoreYears();
-
-        $this->getYearList();
-
-        $this->setOutput();
-
+        // set and return posts page
+        $this->setOutput($args);
         return $this->output; // $output;
     }
 
@@ -272,7 +273,7 @@ class bootstrapPostTimeline {
         $this->posts = $output;
     }
 
-    function getYearListItems() {
+    function getYearList() {
         $args = array(
             'post_type' => 'timeline_post',
             'type' => 'yearly',
@@ -294,12 +295,12 @@ class bootstrapPostTimeline {
         return $this->yearListItems[$year];
     }
 
-    function getYearList() {
-        if(!$this->year_list){
+    function setYearList() {
+        if (!$this->year_list) {
             return;
         }
         $output = '';
-        $this->getYearListItems();
+        $this->getYearList();
         if ($this->yearListItems) {
             ob_start();
             require_once($this->theme->year_list);
@@ -308,7 +309,7 @@ class bootstrapPostTimeline {
         $this->yearList = $output;
     }
 
-    function getPostIdsByYears() {
+    function getMoreYears() {
         $post_date = $this->post_date_from;
         $args = array(
             'post_type' => 'timeline_post',
@@ -325,13 +326,13 @@ class bootstrapPostTimeline {
         $this->postIdsByYears = $postIdsByYears;
     }
 
-    function postIdsByYear($year) {
+    function getPostIdsByYear($year) {
         return $this->postIdsByYears[$year];
     }
 
-    function getMoreYears() {
+    function setMoreYears() {
         $output = '';
-        $this->getPostIdsByYears();
+        $this->getMoreYears();
         if ($this->postIdsByYears) {
             if (file_exists($this->theme->posts_more)) {
                 ob_start();
@@ -344,7 +345,11 @@ class bootstrapPostTimeline {
         $this->moreYears = $output;
     }
 
-    function setOutput() {
+    function setOutput($args) {
+        $this->getPosts($args);
+        $this->setMoreYears();
+        $this->setYearList();
+
         ob_start();
         require_once($this->theme->posts_page);
         $output = ob_get_clean();
