@@ -35,6 +35,7 @@ class bootstrapPostTimeline {
     var $ajax = false;
     var $shortcode = false;
     var $maxPages = 0;
+    var $offset = 0;
     var $year_list;
 
     //////////////////////////////////////////
@@ -169,7 +170,7 @@ class bootstrapPostTimeline {
         wp_localize_script(
                 'bootstrap-post-timeline', 'bpt', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'startPage' => $paged,
+            'startPage' => $this->offset,
             'maxPages' => $this->maxPages,
             'nextLink' => next_posts($this->maxPages, false),
             'security' => $ajax_nonce
@@ -183,11 +184,13 @@ class bootstrapPostTimeline {
         check_ajax_referer('my-special-string', 'security');
         $year = sanitize_text_field(intval($_POST['year']));
         $maxPages = sanitize_text_field(intval($_POST['maxPages']));
+        $startPage = sanitize_text_field(intval($_POST['startPage']));
         $args = array(
             'post_type' => 'timeline_post',
             'ignore_sticky_posts' => 1,
             'year' => $year,
-            'posts_per_page' => $maxPages
+            'posts_per_page' => $maxPages,
+            'offset' => $startPage
         );
         $this->getPosts($args);
         $this->ajax = true;
@@ -253,6 +256,11 @@ class bootstrapPostTimeline {
         $this->maxPages = $posts_per_page;
         $this->post_date_from = $post_date_from;
 
+        //more to set
+        $this->offset = $displayed_posts; // $posts_per_page * page
+        $this->morePosts = $m; // if show read more = are there any more posts to display this year?
+
+        
         //pass info top theme file
         $this->shortcode = true;
 
