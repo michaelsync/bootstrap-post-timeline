@@ -34,6 +34,7 @@ class bootstrapPostTimeline {
     var $post_date_from;
     var $ajax = false;
     var $shortcode = false;
+    var $maxPages = 0;
 
     //////////////////////////////////////////
     // construct
@@ -55,10 +56,12 @@ class bootstrapPostTimeline {
         //add "where" to archive calls to get custom post type from archive
         add_filter('getarchives_where', array(&$this, 'timeline_post_type_archive_where'), 10, 2);
 
-        //set styles&scripts
-        add_action('wp_enqueue_scripts', array(&$this, 'add_script'));
+        //set styles
         add_action('wp_print_styles', array(&$this, 'add_style'));
-
+        // add scripts in footer
+        add_action('wp_footer', array($this, 'add_script'));
+//        add_action('wp_enqueue_scripts', array(&$this, 'add_script'));
+        
         $this->setTheme();
     }
 
@@ -166,8 +169,8 @@ class bootstrapPostTimeline {
                 'bootstrap-post-timeline', 'bpt', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
             'startPage' => $paged,
-            'maxPages' => $max,
-            'nextLink' => next_posts($max, false),
+            'maxPages' => $this->maxPages,
+            'nextLink' => next_posts($this->maxPages, false),
             'security' => $ajax_nonce
                 )
         );
@@ -217,11 +220,15 @@ class bootstrapPostTimeline {
         }
 
         // posts per page
+//        echo 'get_option(posts_per_page);: '.get_option('posts_per_page').'<br />';
+//        echo '$atts[posts_per_page];'.$atts['posts_per_page'].'<br />';
         $posts_per_page = $atts['posts_per_page'];
         if (!$posts_per_page) {
             $posts_per_page = get_option('posts_per_page');
         }
         $args['posts_per_page'] = $posts_per_page;
+        $this->maxPages = $args['posts_per_page'];
+//        echo '$atts[posts_per_page];'.$atts['posts_per_page'].'<br />';
 
         // page
         $timeline_next = 1;
