@@ -212,7 +212,7 @@ class bootstrapPostTimeline {
             'posts_per_page' => 0,
             'offset' => 0,
             'from_year' => '',
-            'year_list' => 1), $atts);
+            'year_list' => 1), $atts, 'bootstrap-post-timeline');
 
         $args = array('post_type' => $atts['post_type']);
 
