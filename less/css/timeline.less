@@ -11,16 +11,18 @@ timeline.css
     width: 100%;
     margin: 20px 0;
     position: relative;
+    padding: 0;
     padding-bottom: 35px;
-    padding-left: 120px;
-    padding-right: 120px;
     overflow: hidden;
     *zoom: 1;
     * {
         box-sizing: border-box;
     }
+    &.yearlist {
+        padding-left: 120px;
+        padding-right: 120px;
+    }
     .timeline-bg(@timeline-bg, 5px);
-
     &::after {
         bottom: 0px;
         position: absolute;
@@ -344,8 +346,10 @@ timeline.css
 /* Small Devices, Tablets */ /* BLUE */
 @media only screen and (max-width: 1024px) {
     #timeline {
-        padding-left: 60px;
-        padding-right: 60px;
+        &.yearlist {
+            padding-left: 60px;
+            padding-right: 60px;
+        }
     }
 }
 
@@ -356,8 +360,9 @@ timeline.css
 /* Small Devices, Tablets */ /* BLUE */
 @media only screen and (max-width: 768px) {
     #timeline {
-        /*padding-left: 0;*/
-        padding: 0;
+        &.yearlist {
+            padding: 0;
+        }
         &::before {
             left: 0;
             z-index: 0;

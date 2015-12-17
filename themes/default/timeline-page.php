@@ -2,7 +2,7 @@
 //$rewrite_url = ( $wp_rewrite->using_permalinks() ) ? '<div class="rewrite_url">' : '';
 //$url = add_query_arg(array('timeline_next' => ( $timeline_next + 1 )));
 ?>
-<div id="timeline">
+<div id="timeline" class="<?php echo ($this->year_list)? 'yearlist' : ''; ?>">
     <?php echo $this->yearList; ?>
     <?php echo $this->posts; ?>
 

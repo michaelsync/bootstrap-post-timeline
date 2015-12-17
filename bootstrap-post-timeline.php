@@ -35,6 +35,7 @@ class bootstrapPostTimeline {
     var $ajax = false;
     var $shortcode = false;
     var $maxPages = 0;
+    var $year_list;
 
     //////////////////////////////////////////
     // construct
@@ -203,7 +204,8 @@ class bootstrapPostTimeline {
         $atts = shortcode_atts(array('category_name' => '',
             'tag' => '',
             'post_type' => 'timeline_post',
-            'posts_per_page' => 0), $atts);
+            'posts_per_page' => 0,
+            'year_list' => 1), $atts);
 
         $args = array('post_type' => $atts['post_type']);
 
@@ -213,7 +215,12 @@ class bootstrapPostTimeline {
             $args['category_name'] = $category_name;
         }
 
-        // tag
+        // Show year list
+        $year_list = $atts['year_list'];
+        if ($year_list) {
+            $this->year_list = true;
+        }
+
         $tag = $atts['tag'];
         if ($tag) {
             $args['tag'] = $tag;
@@ -222,13 +229,11 @@ class bootstrapPostTimeline {
         // posts per page
 //        echo 'get_option(posts_per_page);: '.get_option('posts_per_page').'<br />';
 //        echo '$atts[posts_per_page];'.$atts['posts_per_page'].'<br />';
-        $posts_per_page = $atts['posts_per_page'];
         if (!$posts_per_page) {
             $posts_per_page = get_option('posts_per_page');
         }
         $args['posts_per_page'] = $posts_per_page;
         $this->maxPages = $args['posts_per_page'];
-//        echo '$atts[posts_per_page];'.$atts['posts_per_page'].'<br />';
 
         // page
         $timeline_next = 1;
@@ -290,6 +295,9 @@ class bootstrapPostTimeline {
     }
 
     function getYearList() {
+        if(!$this->year_list){
+            return;
+        }
         $output = '';
         $this->getYearListItems();
         if ($this->yearListItems) {

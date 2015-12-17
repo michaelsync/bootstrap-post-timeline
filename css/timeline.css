@@ -16,9 +16,8 @@ and open the template in the editor.
 #timeline {
   width: 100%;
   margin: 20px 0;
+  padding: 0;
   padding-bottom: 35px;
-  padding-left: 120px;
-  padding-right: 120px;
   overflow: hidden;
   *zoom: 1;
   position: relative;
@@ -28,6 +27,10 @@ and open the template in the editor.
 }
 #timeline * {
   box-sizing: border-box;
+}
+#timeline.yearlist {
+  padding-left: 120px;
+  padding-right: 120px;
 }
 #timeline:before {
   top: 0;
@@ -323,7 +326,7 @@ and open the template in the editor.
 /* Small Devices, Tablets */
 /* BLUE */
 @media only screen and (max-width: 1024px) {
-  #timeline {
+  #timeline.yearlist {
     padding-left: 60px;
     padding-right: 60px;
   }
@@ -332,8 +335,7 @@ and open the template in the editor.
 /* Small Devices, Tablets */
 /* BLUE */
 @media only screen and (max-width: 768px) {
-  #timeline {
-    /*padding-left: 0;*/
+  #timeline.yearlist {
     padding: 0;
   }
   #timeline::before {
