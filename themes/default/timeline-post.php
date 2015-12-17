@@ -8,7 +8,7 @@ $time_last = 0;
 $year_top = true;
 $count = 0;
 
-$year = substr($this->post_date_from, 0, 4);
+$year = substr($this->post_from_year, 0, 4);
 $opened = true;
 ?>
 <?php if ($this->shortcode) { ?>

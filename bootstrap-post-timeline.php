@@ -31,7 +31,7 @@ class bootstrapPostTimeline {
     var $yearListItems;
     var $moreYears;
     var $postIdsByYears = array();
-    var $post_date_from;
+    var $post_from_year;
     var $ajax = false;
     var $shortcode = false;
     var $maxPages = 0;
@@ -211,6 +211,7 @@ class bootstrapPostTimeline {
             'post_type' => 'timeline_post',
             'posts_per_page' => 0,
             'offset' => 0,
+            'from_year' => '',
             'year_list' => 1), $atts);
 
         $args = array('post_type' => $atts['post_type']);
@@ -249,19 +250,20 @@ class bootstrapPostTimeline {
         $args['offset'] = $posts_per_page * ( $timeline_next - 1 );
 
         // start from year - current
-        $post_date_from = date('Y-01-01');
-        $args['year'] = $post_date_from;
+        $post_from_year = $atts['from_year'];
+        if (!$post_from_year) {
+            $post_from_year = date('Y');
+        }
+        $args['year'] = $post_from_year;
 
         // set global params
         $this->year_list = $year_list;
         $this->maxPages = $posts_per_page;
-        $this->post_date_from = $post_date_from;
+        $this->post_from_year = $post_from_year;
 
         //more to set
         $this->offset = $displayed_posts; // $posts_per_page * page
         $this->morePosts = $m; // if show read more = are there any more posts to display this year?
-
-        
         //pass info top theme file
         $this->shortcode = true;
 
@@ -319,7 +321,7 @@ class bootstrapPostTimeline {
     }
 
     function getMoreYears() {
-        $post_date = $this->post_date_from;
+        $post_date = $this->post_from_year;
         $args = array(
             'post_type' => 'timeline_post',
             'post_date' => array($post_date, 'compare' => '<='),
