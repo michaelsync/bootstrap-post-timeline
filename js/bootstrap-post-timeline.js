@@ -90,7 +90,7 @@ jQuery(function ($) {
             var year = jQuery(this).data().yearpost;
 
             // if empty load posts
-            if (jQuery(this).children('.item').length === 0) {
+            if (jQuery(this).children('[data-type="timeline_post"]').length === 0) {
                 var data = {
                     year: year,
                     action: 'getpost_by_year',

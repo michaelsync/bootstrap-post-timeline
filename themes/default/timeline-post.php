@@ -57,7 +57,7 @@ $opened = true;
             $content = apply_filters('the_content', $pieces['main']);
         }
         ?>
-        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="item<?php echo $add_class ?>" <?php echo $add_style ?>>
+        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-type="timeline_post" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="item<?php echo $add_class ?>" <?php echo $add_style ?>>
             <div class="item-content">
                 <a href="<?php echo get_permalink(); ?>">
                     <?php echo get_the_post_thumbnail($post->ID, (wp_is_mobile() ? 'medium' : 'large')); ?>
