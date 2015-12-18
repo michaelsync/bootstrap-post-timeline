@@ -144,7 +144,7 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add JavaScript
     function add_script() {
-        if(!$this->shortcode){
+        if (!$this->shortcode) {
             return;
         }
 //        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/imagesloaded.pkgd.js';
@@ -266,6 +266,7 @@ class bootstrapPostTimeline {
         $this->post_from_year = $post_from_year;
 
         //more to set
+        $displayed_posts = $m = 0;
         $this->offset = $displayed_posts; // $posts_per_page * page
         $this->morePosts = $m; // if show read more = are there any more posts to display this year?
         //pass info top theme file
@@ -373,10 +374,12 @@ class bootstrapPostTimeline {
     }
 
     function setTheme() {
-        $this->theme->posts_page = 'themes/default/timeline-page.php';
-        $this->theme->posts = 'themes/default/timeline-post.php';
-        $this->theme->posts_more = 'themes/default/timeline-post_more.php';
-        $this->theme->year_list = 'themes/default/timeline-year-list.php';
+        $this->theme = (object) array(
+                    "posts_page" => 'themes/default/timeline-page.php',
+                    "posts" => 'themes/default/timeline-post.php',
+                    "posts_more" => 'themes/default/timeline-post_more.php',
+                    "year_list" => 'themes/default/timeline-year-list.php',
+        );
     }
 
 }
