@@ -37,6 +37,7 @@ class bootstrapPostTimeline {
     var $maxPages = 0;
     var $offset = 0;
     var $year_list;
+    var $post_type = 'timeline_post';
 
     //////////////////////////////////////////
     // construct
@@ -189,7 +190,7 @@ class bootstrapPostTimeline {
         $maxPages = sanitize_text_field(intval($_POST['maxPages']));
         $startPage = sanitize_text_field(intval($_POST['startPage']));
         $args = array(
-            'post_type' => 'timeline_post',
+            'post_type' => $this->post_type,
             'ignore_sticky_posts' => 1,
             'year' => $year,
             'posts_per_page' => $maxPages,
@@ -211,7 +212,7 @@ class bootstrapPostTimeline {
         // option
         $atts = shortcode_atts(array('category_name' => '',
             'tag' => '',
-            'post_type' => 'timeline_post',
+            'post_type' => $this->post_type,
             'posts_per_page' => 0,
             'offset' => 0,
             'from_year' => '',
@@ -276,6 +277,7 @@ class bootstrapPostTimeline {
     }
 
     function getPosts($args) {
+        // add $this->post_type to args! $args
         $output = '';
         $the_query = new WP_Query($args);
         if ($the_query->have_posts()) {
@@ -289,7 +291,7 @@ class bootstrapPostTimeline {
 
     function getYearList() {
         $args = array(
-            'post_type' => 'timeline_post',
+            'post_type' => $this->post_type,
             'type' => 'yearly',
             'limit' => '',
             'format' => 'custom',
@@ -326,7 +328,7 @@ class bootstrapPostTimeline {
     function getMoreYears() {
         $post_date = $this->post_from_year;
         $args = array(
-            'post_type' => 'timeline_post',
+            'post_type' => $this->post_type,
             'post_date' => array($post_date, 'compare' => '<='),
             'posts_per_page' => -1,
             'fields' => array('ID', 'post_date')
