@@ -188,7 +188,7 @@ class bootstrapPostTimeline {
         check_ajax_referer('my-special-string', 'security');
         $year = sanitize_text_field(intval($_POST['year']));
         $maxPages = sanitize_text_field(intval($_POST['maxPages']));
-        $startPage = sanitize_text_field(intval($_POST['startPage']));
+//        $startPage = sanitize_text_field(intval($_POST['startPage']));
         $args = array(
             'post_type' => $this->post_type,
             'ignore_sticky_posts' => 1,
@@ -281,6 +281,7 @@ class bootstrapPostTimeline {
         // add $this->post_type to args! $args
         $output = '';
         $the_query = new WP_Query($args);
+//        echo($the_query->max_num_pages);
         if ($the_query->have_posts()) {
             ob_start();
             require_once($this->theme->posts);
@@ -291,6 +292,7 @@ class bootstrapPostTimeline {
     }
 
     function getYearList() {
+        add_filter('get_archives_link', array(&$this, 'clearLink'));
         $args = array(
             'post_type' => $this->post_type,
             'type' => 'yearly',
@@ -303,11 +305,16 @@ class bootstrapPostTimeline {
             'order' => 'DESC'
         );
         $navlistItems = wp_get_archives($args);
-        $navlistItems = trim(preg_replace('/\n/', '', $navlistItems), ";");
-        $navlistItems = explode(';', $navlistItems);
+        $navlistItems = explode(';', trim($navlistItems, ';'));
         $this->yearListItems = $navlistItems;
     }
-
+        function clearLink($link) {
+            preg_match_all('/<a .*?>(.*?)<\/a>/', $link, $matches);
+            $link = $matches[1][0];
+            return $link.';';
+        }
+    
+    
     function yearListItem($year) {
         return $this->yearListItems[$year];
     }
