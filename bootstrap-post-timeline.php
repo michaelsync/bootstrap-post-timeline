@@ -24,7 +24,7 @@ include_once(dirname(__FILE__) . '/functions.php');
 // Start the plugin
 class bootstrapPostTimeline {
 
-    var $theme;
+    var $theme = 'default';
     var $posts;
     var $output;
     var $yearList;
@@ -36,8 +36,13 @@ class bootstrapPostTimeline {
     var $shortcode = false;
     var $maxPages = 0;
     var $offset = 0;
-    var $year_list;
+    var $show_year_list;
     var $post_type = 'timeline_post';
+    var $postID;
+    var $page;
+    var $pagination;
+    var $query_atts;
+    var $posts_per_page;
 
     //////////////////////////////////////////
     // construct
@@ -56,6 +61,8 @@ class bootstrapPostTimeline {
         //register ajax calls
         add_action('wp_ajax_getpost_by_year', array(&$this, 'process_getpost_by_year'));
         add_action('wp_ajax_nopriv_getpost_by_year', array(&$this, 'process_getpost_by_year'));
+//        add_filter('query_vars', array(&$this, 'add_query_vars_filter'));
+
         //add "where" to archive calls to get custom post type from archive
         add_filter('getarchives_where', array(&$this, 'timeline_post_type_archive_where'), 10, 2);
 
@@ -174,7 +181,8 @@ class bootstrapPostTimeline {
         wp_localize_script(
                 'bootstrap-post-timeline', 'bpt', array(
             'ajaxurl' => admin_url('admin-ajax.php'),
-            'startPage' => $this->offset,
+            'start' => $this->offset,
+            'get' => $this->posts_per_page,
             'maxPages' => $this->maxPages,
             'nextLink' => next_posts($this->maxPages, false),
             'security' => $ajax_nonce
@@ -182,22 +190,31 @@ class bootstrapPostTimeline {
         );
     }
 
+//    function add_query_vars_filter($vars) {
+//        $vars[] = 'from_year';
+//        $vars[] = 'get';
+//        $vars[] = 'start';
+//        return $vars;
+//    }
+
     //////////////////////////////////////////
     // set AJAX calls function
     function process_getpost_by_year() {
-        check_ajax_referer('my-special-string', 'security');
-        $year = sanitize_text_field(intval($_POST['year']));
-        $maxPages = sanitize_text_field(intval($_POST['maxPages']));
-//        $startPage = sanitize_text_field(intval($_POST['startPage']));
-        $args = array(
-            'post_type' => $this->post_type,
-            'ignore_sticky_posts' => 1,
-            'year' => $year,
-            'posts_per_page' => $maxPages,
-            'offset' => $startPage
-        );
-        $this->getPosts($args);
         $this->ajax = true;
+        check_ajax_referer('my-special-string', 'security');
+
+        $year = sanitize_text_field(intval($_GET['from_year'])); //get_query_var('from_year'); //sanitize_text_field(intval($_POST['year']));
+        $get = sanitize_text_field(intval($_GET['get'])); //get_query_var('get'); //sanitize_text_field(intval($_POST['get']));
+        $start = sanitize_text_field(intval($_GET['start'])); //get_query_var('start'); //sanitize_text_field(intval($_POST['start']));
+        $paged = sanitize_text_field(intval($_GET['paged'])); 
+        $args = array(
+            'from_year' => $year,
+            'posts_per_page' => $get,
+            'offset' => $start,
+            'paged'=> $paged
+        );
+        $this->phraseAtts($args);
+        $this->getPosts();
         echo $this->posts;
 //      wp_send_json();
         wp_die();
@@ -206,25 +223,35 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // ShortCode
     function shortcode($atts) {
-        global $post, $wp_rewrite;
-        $output = '';
+        global $post; //, $wp_rewrite;
+        $this->postID = $post->ID;
 
+        $this->phraseAtts($atts);
+
+        // set to load js files
+        $this->shortcode = true;
+
+        // set and return posts page
+        $this->setOutput();
+        return $this->output; // $output;
+    }
+
+    function phraseAtts($shortcodeAtts) {
         // option
-        $atts = shortcode_atts(array('category_name' => '',
+        $atts = shortcode_atts(array(
+            'category_name' => '',
             'tag' => '',
             'post_type' => $this->post_type,
-            'posts_per_page' => 0,
+            'posts_per_page' => $this->posts_per_page,
             'offset' => 0,
             'from_year' => '',
-            'year_list' => 1), $atts, 'bootstrap-post-timeline');
+            'show_year_list' => 1,
+            'theme' => $this->theme,
+            'paged' => false), $shortcodeAtts, 'bootstrap-post-timeline');
 
-        $args = array('post_type' => $atts['post_type']);
-
+        $args = array('post_type' => $atts['post_type']); //$this->post_type
         // Show year list
-        $year_list = $atts['year_list'];
-        if ($year_list) {
-            $year_list = true;
-        }
+        $this->show_year_list = ($atts['show_year_list']) ? true : false;
 
         // category name
         $category_name = $atts['category_name'];
@@ -238,20 +265,20 @@ class bootstrapPostTimeline {
         }
 
         // page
-        $timeline_next = 1;
-        if (isset($_GET['timeline_next'])) {
-            $timeline_next = $_GET['timeline_next'];
-        }
+        $page = ($atts['paged'])? $atts['paged'] : 1; //get_query_var('paged') | get_query_var('page') | 1;
+        $this->page = $page;
 
         // posts per page
         $posts_per_page = $atts['posts_per_page'];
         if (!$posts_per_page) {
             $posts_per_page = get_option('posts_per_page');
         }
+        $args['posts_per_page'] = $posts_per_page;
+        $this->posts_per_page = $args['posts_per_page'];
 
         // get posts
-        $args['posts_per_page'] = $posts_per_page;
-        $args['offset'] = $posts_per_page * ( $timeline_next - 1 );
+        $args['offset'] = $atts['offset'] + $posts_per_page * ( $page - 1 );
+        $this->offset = $args['offset'];
 
         // start from year - current
         $post_from_year = $atts['from_year'];
@@ -259,30 +286,18 @@ class bootstrapPostTimeline {
             $post_from_year = date('Y');
         }
         $args['year'] = $post_from_year;
+        $this->post_from_year = $args['year'];
 
-        // set global params
-        $this->year_list = $year_list;
-        $this->maxPages = $posts_per_page;
-        $this->post_from_year = $post_from_year;
-
-        //more to set
-        $displayed_posts = $m = 0;
-        $this->offset = $displayed_posts; // $posts_per_page * page
-        $this->morePosts = $m; // if show read more = are there any more posts to display this year?
-        //pass info top theme file
-        $this->shortcode = true;
-
-        // set and return posts page
-        $this->setOutput($args);
-        return $this->output; // $output;
+        $this->query_atts = $args;
     }
 
-    function getPosts($args) {
+    function getPosts() {
         // add $this->post_type to args! $args
         $output = '';
-        $the_query = new WP_Query($args);
-//        echo($the_query->max_num_pages);
+        $the_query = new WP_Query($this->query_atts);
         if ($the_query->have_posts()) {
+            $this->maxPages = $the_query->max_num_pages;
+            $this->getPagination();
             ob_start();
             require_once($this->theme->posts);
             $output = ob_get_clean();
@@ -304,23 +319,22 @@ class bootstrapPostTimeline {
             'echo' => 0,
             'order' => 'DESC'
         );
-        $navlistItems = wp_get_archives($args);
-        $navlistItems = explode(';', trim($navlistItems, ';'));
+        $navlistItems = explode(';', trim(wp_get_archives($args), ';'));
         $this->yearListItems = $navlistItems;
     }
-        function clearLink($link) {
-            preg_match_all('/<a .*?>(.*?)<\/a>/', $link, $matches);
-            $link = $matches[1][0];
-            return $link.';';
-        }
-    
-    
+
+    function clearLink($link) {
+        preg_match_all('/<a .*?>(.*?)<\/a>/', $link, $matches);
+        $link = $matches[1][0];
+        return $link . ';';
+    }
+
     function yearListItem($year) {
         return $this->yearListItems[$year];
     }
 
     function setYearList() {
-        if (!$this->year_list) {
+        if (!$this->show_year_list) {
             return;
         }
         $output = '';
@@ -333,11 +347,12 @@ class bootstrapPostTimeline {
         $this->yearList = $output;
     }
 
-    function getMoreYears() {
+    function getPostIdsByYears() {
         $post_date = $this->post_from_year;
         $args = array(
             'post_type' => $this->post_type,
-            'post_date' => array($post_date, 'compare' => '<='),
+//            'post_date' => array($post_date, 'compare' => '<='),
+            'offset' => $this->posts_per_page,
             'posts_per_page' => -1,
             'fields' => array('ID', 'post_date')
         );
@@ -356,23 +371,37 @@ class bootstrapPostTimeline {
 
     function setMoreYears() {
         $output = '';
-        $this->getMoreYears();
+        $this->getPostIdsByYears();
         if ($this->postIdsByYears) {
+            $moreYears = $this->postIdsByYears;
+            unset($moreYears[$this->post_from_year]);
+            $this->moreYears = $moreYears;
             if (file_exists($this->theme->posts_more)) {
                 ob_start();
                 require_once($this->theme->posts_more);
                 $output = ob_get_clean();
             } else {
-                $output = $this->postIdsByYears;
+                $output = $this->moreYears;
             }
         }
         $this->moreYears = $output;
     }
 
-    function setOutput($args) {
-        $this->getPosts($args);
+    function getPaginationURL() {
+        if ($this->maxPages > $this->page) {
+            return add_query_arg(array('page_id' => $this->postID, 'from_year' => $this->post_from_year, 'paged' => $this->page + 1, 'cur' => $this->page, 'max' => $this->maxPages), site_url());
+        }
+    }
+
+    function getPagination() {
+        $this->pagination = $this->getPaginationURL();
+    }
+
+    function setOutput() {
+        $this->getPosts();
         $this->setMoreYears();
         $this->setYearList();
+        $this->getPagination();
 
         ob_start();
         require_once($this->theme->posts_page);
@@ -381,11 +410,12 @@ class bootstrapPostTimeline {
     }
 
     function setTheme() {
+        $theme = $this->theme;
         $this->theme = (object) array(
-                    "posts_page" => 'themes/default/timeline-page.php',
-                    "posts" => 'themes/default/timeline-post.php',
-                    "posts_more" => 'themes/default/timeline-post_more.php',
-                    "year_list" => 'themes/default/timeline-year-list.php',
+                    "posts_page" => 'themes/' . $theme . '/timeline-page.php',
+                    "posts" => 'themes/' . $theme . '/timeline-post.php',
+                    "posts_more" => 'themes/' . $theme . '/timeline-post_more.php',
+                    "year_list" => 'themes/' . $theme . '/timeline-year-list.php',
         );
     }
 

@@ -7,14 +7,11 @@
 $time_last = 0;
 $year_top = true;
 $count = 0;
-
 $year = substr($this->post_from_year, 0, 4);
+
 $opened = true;
 ?>
-<?php if ($this->shortcode) { ?>
-    <h3 id="<?php echo esc_attr($year) ?>" name="<?php echo esc_attr($year) ?>" data-yearhead="<?php echo esc_attr($year) ?>" class="year_head" data-toggle="collapse" role="button" data-target=".year-<?php echo esc_attr($year) ?>" aria-expanded="<?php echo (($opened) ? 'true' : 'false') ?>"><span><?php echo $year ?></span></h3>
-    <ul class="year_posts year-<?php echo esc_attr($year) ?> collapse <?php echo (($opened) ? 'in' : '') ?>" data-yearpost="<?php echo esc_attr($year) ?>">
-<?php } ?>
+<ul class="year_posts year-<?php echo esc_attr($year) ?> collapse <?php echo (($opened) ? 'in' : '') ?>" data-yearposts="<?php echo esc_attr($year) ?>">
     <?php
     while ($the_query->have_posts()) {
         $the_query->the_post();
@@ -57,12 +54,13 @@ $opened = true;
             $content = apply_filters('the_content', $pieces['main']);
         }
         ?>
-        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-type="timeline_post" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="item<?php echo $add_class ?>" <?php echo $add_style ?>>
+        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-type="timeline_post" data-yearpost="<?php echo esc_attr($year) ?>" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="item<?php echo $add_class ?>" <?php echo $add_style ?>>
             <div class="item-content">
                 <a href="<?php echo get_permalink(); ?>">
                     <?php echo get_the_post_thumbnail($post->ID, (wp_is_mobile() ? 'medium' : 'large')); ?>
                     <h4 class="title"><?php echo $title ?></h4>
                     <?php echo (!empty($subtitle)) ? '<h5 class="subtitle">' . $subtitle . '</h5>' : ''; ?>
+                    <h6><?php echo get_post_time(get_option('date_format')); ?></h6>
                     <?php echo $content ?>
                 </a>
             </div>
@@ -72,6 +70,6 @@ $opened = true;
         $year_top = 0;
     }
     ?>
-<?php if ($this->shortcode) { ?>
-    </ul>
+</ul><?php if ($this->pagination) { ?>
+    <a class="loadmore" title="Load more post from this Year" href="<?php echo $this->pagination; ?>"><-- Load more --></a>
 <?php } ?>

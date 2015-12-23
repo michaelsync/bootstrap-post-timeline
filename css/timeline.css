@@ -19,6 +19,7 @@ and open the template in the editor.
   padding: 0;
   padding-bottom: 35px;
   overflow: hidden;
+  text-align: center;
   *zoom: 1;
   position: relative;
   /* Baloon */
@@ -56,6 +57,7 @@ and open the template in the editor.
   border-radius: 50%;
 }
 #timeline .year_posts {
+  text-align: left;
   padding: 15px 0;
   /* 5px; */
   overflow: hidden;
@@ -208,6 +210,14 @@ and open the template in the editor.
   background: url("../images/timeline_point_l.png") no-repeat scroll 0% 0%;
   top: -15px;
   right: -15px;
+}
+#timeline .item-anchor,
+#timeline .item.item-anchor {
+  /* display: none; */
+  visibility: hidden !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 #timeline .pagenation,
 #timeline #infscr-loading {

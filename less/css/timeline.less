@@ -14,6 +14,7 @@ timeline.css
     padding: 0;
     padding-bottom: 35px;
     overflow: hidden;
+    text-align: center;
     *zoom: 1;
     * {
         box-sizing: border-box;
@@ -36,6 +37,7 @@ timeline.css
         border-radius: 50%;
     }
     .year_posts {
+        text-align: left;
         padding: 15px 0; /* 5px; */
         overflow: hidden;
         list-style: none;
@@ -197,7 +199,14 @@ timeline.css
         top: -15px;
         right: -15px;
     }
-
+    .item-anchor,
+    .item.item-anchor {
+        /* display: none; */
+        visibility: hidden !important;
+        height: 0 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
     /* Pagenation */
     .pagenation, #infscr-loading {
         text-align: center;

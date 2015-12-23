@@ -17,7 +17,8 @@ function get_posts_fields($args = array()) {
         'menu_order' => '%d', 'post_parent' => '%d',
         'post_excerpt' => false, 'post_content' => false,
         'post_status' => '%s', 'comment_status' => false, 'ping_status' => false,
-        'to_ping' => false, 'pinged' => false, 'comment_count' => '%d'
+        'to_ping' => false, 'pinged' => false, 'comment_count' => '%d',
+        'offset' => 0
     );
     $defaults = array(
         'post_type' => 'post',
@@ -25,6 +26,7 @@ function get_posts_fields($args = array()) {
         'orderby' => 'post_date',
         'order' => 'DESC',
         'posts_per_page' => get_option('posts_per_page'),
+        'offset' => 0,
     );
     global $wpdb;
     $args = wp_parse_args($args, $defaults);
@@ -81,14 +83,19 @@ function get_posts_fields($args = array()) {
         $orderby = 'post_date';
     if (!in_array(strtoupper($order), array('ASC', 'DESC')))
         $order = 'DESC';
+
+    if (!intval($offset) && $offset != -1)
+        $offset = $defaults['offset'];
     if (!intval($posts_per_page) && $posts_per_page != -1)
         $posts_per_page = $defaults['posts_per_page'];
+
     if ($where == "")
         $where = "1";
     $q = "SELECT $fields FROM $wpdb->posts WHERE " . $where;
     $q .= " ORDER BY $orderby $order";
+
     if ($posts_per_page != -1)
-        $q .= " LIMIT $posts_per_page";
+        $q .= " LIMIT ".(($offset != -1)? ", $offset" : '')." $posts_per_page";
     return $iscol ? $wpdb->get_col($q) : $wpdb->get_results($q);
 }
 
