@@ -3,7 +3,7 @@
 //$url = add_query_arg(array('timeline_next' => ( $timeline_next + 1 )));
 $year = substr($this->post_from_year, 0, 4);
 ?>
-<div id="timeline" class="<?php echo ($this->show_year_list) ? 'yearlist' : ''; ?>">
+<div id="timeline" class="timeline <?php echo ($this->show_year_list) ? 'yearlist' : ''; ?>">
     <?php echo $this->yearList; ?>
     <h3 id="<?php echo esc_attr($year) ?>" name="<?php echo esc_attr($year) ?>" data-yearhead="<?php echo esc_attr($year) ?>" class="year_head" data-toggle="collapse" role="button" data-target=".year-<?php echo esc_attr($year) ?>" aria-expanded="true"><span><?php echo $year ?></span></h3>
     <?php echo $this->posts; ?>

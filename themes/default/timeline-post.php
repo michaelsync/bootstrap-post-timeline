@@ -54,15 +54,14 @@ $opened = true;
             $content = apply_filters('the_content', $pieces['main']);
         }
         ?>
-        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-type="timeline_post" data-yearpost="<?php echo esc_attr($year) ?>" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="item<?php echo $add_class ?>" <?php echo $add_style ?>>
+        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-type="timeline_post" data-yearpost="<?php echo esc_attr($year) ?>" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="post item<?php echo $add_class ?>" <?php echo $add_style ?>>
             <div class="item-content">
-                <a href="<?php echo get_permalink(); ?>">
-                    <?php echo get_the_post_thumbnail($post->ID, (wp_is_mobile() ? 'medium' : 'large')); ?>
-                    <h4 class="title"><?php echo $title ?></h4>
-                    <?php echo (!empty($subtitle)) ? '<h5 class="subtitle">' . $subtitle . '</h5>' : ''; ?>
-                    <h6><?php echo get_post_time(get_option('date_format')); ?></h6>
-                    <?php echo $content ?>
-                </a>
+                <?php echo get_the_post_thumbnail($post->ID, (wp_is_mobile() ? 'medium' : 'large')); ?>
+                <h4 class="title"><?php echo $title ?></h4>
+                <?php echo (!empty($subtitle)) ? '<h5 class="subtitle">' . $subtitle . '</h5>' : ''; ?>
+                <h6><?php echo get_post_time(get_option('date_format')); ?></h6>
+                <?php echo $content ?>
+                <a href="<?php echo get_permalink(); ?>" class="more-link"><?php echo __('Continue reading <span class="meta-nav">&rarr;</span>', 'bootstrap-post-timeline');?></a>
             </div>
         </li>
         <?php

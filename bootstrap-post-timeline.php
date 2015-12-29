@@ -47,7 +47,7 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // construct
     function __construct() {
-//        load_plugin_textdomain('bootstrap-post-timeline', false, plugin_basename(dirname(__FILE__)) . '/languages');
+        load_plugin_textdomain('bootstrap-post-timeline', false, plugin_basename(dirname(__FILE__)) . '/languages');
         // set plugin post type
         register_activation_hook(__FILE__, array(&$this, 'rewrite_flush'));
         add_action('init', array(&$this, 'create_post_type'));
