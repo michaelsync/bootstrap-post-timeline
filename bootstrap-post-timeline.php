@@ -62,15 +62,15 @@ class bootstrapPostTimeline {
         add_action('wp_ajax_getpost_by_year', array(&$this, 'process_getpost_by_year'));
         add_action('wp_ajax_nopriv_getpost_by_year', array(&$this, 'process_getpost_by_year'));
 //        add_filter('query_vars', array(&$this, 'add_query_vars_filter'));
-
         //add "where" to archive calls to get custom post type from archive
         add_filter('getarchives_where', array(&$this, 'timeline_post_type_archive_where'), 10, 2);
 
-        //set styles
+        // register styles and js
+        add_action('wp_enqueue_scripts', array(&$this, 'registerJSnCSS'));
+        //add styles
         add_action('wp_print_styles', array(&$this, 'add_style'));
         // add scripts in footer
         add_action('wp_footer', array($this, 'add_script'));
-//        add_action('wp_enqueue_scripts', array(&$this, 'add_script'));
 
         $this->setTheme();
     }
@@ -148,19 +148,28 @@ class bootstrapPostTimeline {
         update_post_meta($post_id, 'timeline_subtitle', $subtitle);
     }
 
+    /*
+     * 
+     */
+    function registerJSnCSS() {
+        // Register styles; use min if not debuging
+        if (!WP_DEBUG) {
+            $jsFile = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.min.js';
+            $cssFile = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/css/timeline.min.css';
+        } else {
+            $jsFile = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.js';
+            $cssFile = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/css/timeline.css';
+        }
+        wp_register_script('bootstrap-post-timeline', $jsFile, array('jquery'), '1.0');
+        wp_register_style('bootstrap-post-timeline', $cssFile, false, '1.1');
+    }
+
     //////////////////////////////////////////
     // add JavaScript
     function add_script() {
         if (!$this->shortcode) {
             return;
         }
-//        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/imagesloaded.pkgd.js';
-//        wp_enqueue_script('bootstrap-post-timeline-imagesloaded.pkgd', $filename, array('jquery'), '3.1.8');
-//        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/jquery.infinitescroll.js';
-//        wp_enqueue_script('bootstrap-post-timeline-infinitescroll', $filename, array('jquery'), '2.1.0');
-
-        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/js/bootstrap-post-timeline.js';
-        wp_register_script('bootstrap-post-timeline', $filename, array('jquery'), '1.0');
         $this->setAJAXnonce();
         wp_enqueue_script('bootstrap-post-timeline');
     }
@@ -168,8 +177,7 @@ class bootstrapPostTimeline {
     //////////////////////////////////////////
     // add css
     function add_style() {
-        $filename = plugins_url(dirname('/' . plugin_basename(__FILE__))) . '/css/timeline.css';
-        wp_enqueue_style('bootstrap-post-timeline', $filename, false, '1.1');
+        wp_enqueue_style('bootstrap-post-timeline');
     }
 
     //////////////////////////////////////////
@@ -196,7 +204,6 @@ class bootstrapPostTimeline {
 //        $vars[] = 'start';
 //        return $vars;
 //    }
-
     //////////////////////////////////////////
     // set AJAX calls function
     function process_getpost_by_year() {
@@ -206,12 +213,12 @@ class bootstrapPostTimeline {
         $year = sanitize_text_field(intval($_GET['from_year'])); //get_query_var('from_year'); //sanitize_text_field(intval($_POST['year']));
         $get = sanitize_text_field(intval($_GET['get'])); //get_query_var('get'); //sanitize_text_field(intval($_POST['get']));
         $start = sanitize_text_field(intval($_GET['start'])); //get_query_var('start'); //sanitize_text_field(intval($_POST['start']));
-        $paged = sanitize_text_field(intval($_GET['paged'])); 
+        $paged = sanitize_text_field(intval($_GET['paged']));
         $args = array(
             'from_year' => $year,
             'posts_per_page' => $get,
             'offset' => $start,
-            'paged'=> $paged
+            'paged' => $paged
         );
         $this->phraseAtts($args);
         $this->getPosts();
@@ -265,7 +272,7 @@ class bootstrapPostTimeline {
         }
 
         // page
-        $page = ($atts['paged'])? $atts['paged'] : 1; //get_query_var('paged') | get_query_var('page') | 1;
+        $page = ($atts['paged']) ? $atts['paged'] : 1; //get_query_var('paged') | get_query_var('page') | 1;
         $this->page = $page;
 
         // posts per page
@@ -283,7 +290,7 @@ class bootstrapPostTimeline {
         // start from year - or get latest
         $post_from_year = $atts['from_year'];
         if (!$post_from_year) {
-            $recent_posts = wp_get_recent_posts( array('numberposts' => 1, 'post_type' => $this->post_type));
+            $recent_posts = wp_get_recent_posts(array('numberposts' => 1, 'post_type' => $this->post_type));
             $post_from_year = date('Y', strtotime($recent_posts[0]['post_date']));
         }
         $args['year'] = $post_from_year;

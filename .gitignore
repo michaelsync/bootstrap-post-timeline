@@ -15,3 +15,4 @@ bower_components/
 nbproject/
 test.html
 style.css
+node_modules/
