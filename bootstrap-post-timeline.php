@@ -280,10 +280,11 @@ class bootstrapPostTimeline {
         $args['offset'] = $atts['offset'] + $posts_per_page * ( $page - 1 );
         $this->offset = $args['offset'];
 
-        // start from year - current
+        // start from year - or get latest
         $post_from_year = $atts['from_year'];
         if (!$post_from_year) {
-            $post_from_year = date('Y');
+            $recent_posts = wp_get_recent_posts( array('numberposts' => 1, 'post_type' => $this->post_type));
+            $post_from_year = date('Y', strtotime($recent_posts[0]['post_date']));
         }
         $args['year'] = $post_from_year;
         $this->post_from_year = $args['year'];
