@@ -208,12 +208,12 @@ and open the template in the editor.
 #timeline #infscr-loading em {
   display: none;
 }
-#timeline .pagenation a {
-  display: block;
-  padding: 20px;
-}
-#timeline .pagenation img {
-  display: none;
+#timeline .loadmore {
+  background: #f1f1f1;
+  color: #828282;
+  font-size: 24px;
+  margin: 0 0 10px 0;
+  padding: 5px 0;
 }
 #timeline .timeline-container {
   position: absolute;

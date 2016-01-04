@@ -69,6 +69,7 @@ $opened = true;
         $year_top = 0;
     }
     ?>
-</ul><?php if ($this->pagination) { ?>
-    <a class="loadmore" title="Load more post from this Year" href="<?php echo $this->pagination; ?>"><-- Load more --></a>
+</ul>
+<?php if ($this->pagination) { ?>
+    <a class="loadmore year-<?php echo esc_attr($year) ?> collapse in" title="Load more post from this Year" href="<?php echo $this->pagination; ?>"><i class="fa fa-chevron-down"></i></a>
 <?php } ?>

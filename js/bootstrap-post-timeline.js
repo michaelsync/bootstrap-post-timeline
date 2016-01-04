@@ -114,11 +114,14 @@ jQuery(function ($) {
         });
 
         $('[data-yearposts]').on('show.bs.collapse', function () {
+            console.log(this);
             var yearposts = jQuery(this);
             var year = yearposts.data().yearposts;
 
             // if empty load posts
             if (yearposts.children('[data-type="timeline_post"]').length === 0) {
+                console.log(this);
+                console.log(yearposts.children('[data-type="timeline_post"]'))
                 var params = {
                     action: 'getpost_by_year',
                     from_year: year,
@@ -135,7 +138,7 @@ jQuery(function ($) {
                     jQuery('a.item-anchor[data-yearpost="' + params.from_year + '"]').slice(0, params.get).remove();
                     // load posts first time
 
-                    yearposts.html(jQuery(data).filter('[data-yearposts]'));
+                    yearposts.html(jQuery(data).filter('[data-yearposts]').html());
                     yearposts.after(jQuery(data).filter('a.loadmore'));
                     updateYearList();
                 }, 'html');
