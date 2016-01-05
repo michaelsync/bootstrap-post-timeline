@@ -67,6 +67,7 @@ and open the template in the editor.
 }
 #timeline .year_head {
   /*background: transparent url("../images/timeline_year2.png") no-repeat 50% 0%;*/
+  cursor: pointer;
   color: #D7D7D7;
   font-weight: bold;
   font-weight: 900;

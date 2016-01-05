@@ -99,5 +99,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-compress');
     grunt.loadNpmTasks('grunt-mkdir');
     grunt.loadNpmTasks('grunt-contrib-rename');
-    grunt.registerTask('package', ['mkdir', 'compress', 'rename']);
+    grunt.registerTask('package', ['less', 'uglify', 'cssmin', 'mkdir', 'compress', 'rename']);
 };

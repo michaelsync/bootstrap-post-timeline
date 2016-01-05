@@ -5,7 +5,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-defined( 'ABSPATH' ) or die();
+defined('ABSPATH') or die();
 
 //http://wordpress.stackexchange.com/a/108421
 function get_posts_fields($args = array()) {
@@ -84,18 +84,28 @@ function get_posts_fields($args = array()) {
     if (!in_array(strtoupper($order), array('ASC', 'DESC')))
         $order = 'DESC';
 
-    if (!intval($offset) && $offset != -1)
+    if (!intval($offset) && $offset != -1) {
         $offset = $defaults['offset'];
-    if (!intval($posts_per_page) && $posts_per_page != -1)
-        $posts_per_page = $defaults['posts_per_page'];
+    }
 
-    if ($where == "")
+    if (!intval($posts_per_page) && $posts_per_page != -1) {
+        $posts_per_page = $defaults['posts_per_page'];
+    }
+
+    if ($where == "") {
         $where = "1";
+    }
     $q = "SELECT $fields FROM $wpdb->posts WHERE " . $where;
     $q .= " ORDER BY $orderby $order";
 
-    if ($posts_per_page != -1)
-        $q .= " LIMIT ".(($offset != -1)? ", $offset" : '')." $posts_per_page";
+    if ($posts_per_page != -1) {
+        $q .= " LIMIT $posts_per_page";
+    }
+
+    if ($offset != 0) {
+        $q .= " OFFSET $offset";
+    }
+
     return $iscol ? $wpdb->get_col($q) : $wpdb->get_results($q);
 }
 

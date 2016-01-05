@@ -361,7 +361,7 @@ class bootstrapPostTimeline {
             'post_type' => $this->post_type,
 //            'post_date' => array($post_date, 'compare' => '<='),
             'offset' => $this->posts_per_page,
-            'posts_per_page' => -1,
+            'posts_per_page' => 1000,//-1,
             'fields' => array('ID', 'post_date')
         );
         $postIdsDates = get_posts_fields($args);

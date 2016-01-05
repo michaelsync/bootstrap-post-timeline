@@ -3,6 +3,10 @@
   To change this license header, choose License Headers in Project Properties.
   To change this template file, choose Tools | Templates
   and open the template in the editor.
+ * 
+ * 
+ * CHANGES
+ * removed name="post-<?php echo $post->ID; ?>" from li
  */
 $time_last = 0;
 $year_top = true;
@@ -54,7 +58,7 @@ $opened = true;
             $content = apply_filters('the_content', $pieces['main']);
         }
         ?>
-        <li id="post-<?php echo $post->ID ?>" name="post-<?php echo $post->ID; ?>" data-type="timeline_post" data-yearpost="<?php echo esc_attr($year) ?>" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="post item<?php echo $add_class ?>" <?php echo $add_style ?>>
+        <li id="post-<?php echo $post->ID ?>" data-type="timeline_post" data-yearpost="<?php echo esc_attr($year) ?>" data-date="<?php echo get_post_time(get_option('date_format')); ?>" class="post item<?php echo $add_class ?>" <?php echo $add_style ?>>
             <div class="item-content">
                 <?php echo get_the_post_thumbnail($post->ID, (wp_is_mobile() ? 'medium' : 'large')); ?>
                 <h4 class="title"><?php echo $title ?></h4>
