@@ -18,7 +18,7 @@ if (version_compare($wp_version, "3.8", "<")) {
     return false;
 }
 
-include_once(dirname(__FILE__) . '/functions.php');
+include_once(dirname(__FILE__) . '/includes/functions.php');
 
 //////////////////////////////////////////////////////
 // Start the plugin

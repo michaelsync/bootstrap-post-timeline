@@ -52,6 +52,42 @@ module.exports = function (grunt) {
             php: {
                 files: ['**/*.php']
             }
+        },
+        mkdir: {
+            all: {
+                options: {
+                    create: ['dist']
+                }
+            }
+        },
+        compress: {
+            main: {
+                options: {
+                    archive: 'bootstrap-post-timeline.zip'
+                },
+                expand: true,
+                src: [
+                    'css/*',
+                    'images/*',
+                    'js/*',
+                    'themes/**',
+                    'includes/*',
+                    'index.php',
+                    'bootstrap-post-timeline.php',
+                    'LICENSE',
+                    'readme.txt',
+                    'screenshot-1.jpg',
+                    'screenshot-2.jpg',
+                ],
+                dest: 'bootstrap-post-timeline/'
+            }
+        },
+        rename: {
+            main: {
+                files: [
+                    {src: ['bootstrap-post-timeline.zip'], dest: 'dist/bootstrap-post-timeline.zip'}
+                ]
+            }
         }
     });
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -59,4 +95,9 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-cssmin');
     grunt.registerTask('default', ['less', 'uglify', 'watch']);
+
+    grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-mkdir');
+    grunt.loadNpmTasks('grunt-contrib-rename');
+    grunt.registerTask('package', ['mkdir', 'compress', 'rename']);
 };
