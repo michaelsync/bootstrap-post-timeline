@@ -63,7 +63,7 @@ $opened = true;
                 <?php echo get_the_post_thumbnail($post->ID, (wp_is_mobile() ? 'medium' : 'large')); ?>
                 <h4 class="title"><?php echo $title ?></h4>
                 <?php echo (!empty($subtitle)) ? '<h5 class="subtitle">' . $subtitle . '</h5>' : ''; ?>
-                <h6><?php echo get_post_time(get_option('date_format')); ?></h6>
+                <h6 class="entry-meta"><?php echo get_post_time(get_option('date_format')); ?></h6>
                 <?php echo $content ?>
                 <a href="<?php echo get_permalink(); ?>" class="more-link"><?php echo __('Continue reading <span class="meta-nav">&rarr;</span>', 'bootstrap-post-timeline');?></a>
             </div>
