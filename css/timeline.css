@@ -389,6 +389,12 @@ and open the template in the editor.
     padding-right: 10px;
     width: 100% !important;
   }
+  #timeline .item .title {
+    font-size: 16px;
+  }
+  #timeline .item .subtitle {
+    font-size: 15px;
+  }
   #timeline .item::before {
     left: -20px;
     z-index: 0;
